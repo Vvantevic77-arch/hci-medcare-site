@@ -1,0 +1,504 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="老年人用药管理与子女远程联动 App —— 人机交互课程项目网站">
+<title>老年人用药管理与子女远程联动 App · 起个队名真的好难啊</title>
+<style>
+  /* 系统字体栈：不依赖外部字体，国内访问稳定 */
+  :root {
+    --fs: 18px;
+    --bg: #fbfaf7; --surface: #ffffff; --text: #1f2328; --muted: #57606a;
+    --primary: #0b6e4f; --primary-soft: #e6f2ed; --accent: #b54708; --accent-soft: #fdf0e6;
+    --border: #d8dee4; --radius: 12px; --maxw: 1040px;
+  }
+  html[data-size="lg"] { --fs: 21px; }
+  html[data-size="xl"] { --fs: 24px; }
+  * { box-sizing: border-box; }
+  html { font-size: var(--fs); scroll-behavior: smooth; scroll-padding-top: 5rem; }
+  body {
+    margin: 0; background: var(--bg); color: var(--text); line-height: 1.75;
+    font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "Microsoft YaHei", "Noto Sans CJK SC", "Helvetica Neue", Arial, sans-serif;
+  }
+  a { color: var(--primary); }
+  :focus-visible { outline: 3px solid var(--accent); outline-offset: 3px; border-radius: 4px; }
+  .skip { position: absolute; left: -999px; top: 0; background: var(--primary); color: #fff; padding: .6rem 1rem; z-index: 100; }
+  .skip:focus { left: 1rem; top: 1rem; }
+  .wrap { max-width: var(--maxw); margin: 0 auto; padding: 0 1.25rem; }
+
+  /* 顶部导航 */
+  header.top { position: sticky; top: 0; z-index: 50; background: rgba(255,255,255,.96); border-bottom: 1px solid var(--border); }
+  header.top .wrap { display: flex; align-items: center; gap: 1rem; min-height: 4rem; flex-wrap: wrap; }
+  .brand { font-weight: 700; font-size: 1.05rem; color: var(--text); text-decoration: none; margin-right: auto; }
+  .brand span { color: var(--primary); }
+  nav ul { list-style: none; display: flex; gap: .25rem; margin: 0; padding: 0; flex-wrap: wrap; }
+  nav a { display: block; padding: .45rem .8rem; border-radius: 8px; text-decoration: none; color: var(--muted); font-size: .9rem; min-height: 44px; line-height: 1.9; }
+  nav a:hover { background: var(--primary-soft); color: var(--primary); }
+  nav a[aria-current="true"] { background: var(--primary); color: #fff; }
+  .size-ctl { display: flex; gap: .25rem; align-items: center; font-size: .8rem; color: var(--muted); }
+  .size-ctl button { min-width: 44px; min-height: 44px; border: 1px solid var(--border); background: var(--surface); border-radius: 8px; cursor: pointer; color: var(--text); font-weight: 600; }
+  .size-ctl button[aria-pressed="true"] { border-color: var(--primary); background: var(--primary-soft); color: var(--primary); }
+  /* 首屏 */
+  .hero { padding: 3.5rem 0 2.5rem; background: linear-gradient(180deg, var(--primary-soft), var(--bg)); }
+  .eyebrow { display: inline-block; font-size: .8rem; font-weight: 600; color: var(--primary); background: #fff; border: 1px solid #b7d9cb; padding: .15rem .7rem; border-radius: 999px; }
+  h1 { font-size: 2rem; line-height: 1.35; margin: .8rem 0 .6rem; }
+  .lead { font-size: 1.1rem; color: var(--muted); max-width: 42em; margin: 0 0 1.5rem; }
+  .facts { display: grid; grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); gap: .8rem; margin: 0; padding: 0; list-style: none; }
+  .facts li { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: .9rem 1rem; }
+  .facts b { display: block; font-size: 1.5rem; color: var(--primary); line-height: 1.3; }
+  .facts small { color: var(--muted); font-size: .85rem; }
+
+  /* 通用区块 */
+  section.block { padding: 3rem 0; border-top: 1px solid var(--border); }
+  h2 { font-size: 1.55rem; margin: 0 0 .4rem; }
+  h2 .num { color: var(--primary); margin-right: .4rem; }
+  .sub { color: var(--muted); margin: 0 0 1.8rem; }
+  h3 { font-size: 1.15rem; margin: 1.8rem 0 .6rem; }
+  .grid { display: grid; gap: 1rem; grid-template-columns: repeat(auto-fit, minmax(230px, 1fr)); }
+  .card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 1.2rem 1.3rem; }
+  .card h3 { margin-top: 0; }
+  .card p { margin: .3rem 0; }
+  .muted { color: var(--muted); }
+  .tag { display: inline-block; font-size: .78rem; padding: .05rem .55rem; border-radius: 999px; background: var(--primary-soft); color: var(--primary); margin: .15rem .2rem .15rem 0; }
+  .tag.warn { background: var(--accent-soft); color: var(--accent); }
+  .avatar { width: 3rem; height: 3rem; border-radius: 50%; display: grid; place-items: center; background: var(--primary); color: #fff; font-weight: 700; font-size: 1.1rem; margin-bottom: .6rem; }
+  .callout { border-left: 5px solid var(--primary); background: var(--primary-soft); padding: 1rem 1.2rem; border-radius: 0 var(--radius) var(--radius) 0; margin: 1.2rem 0; }
+  .callout.warn { border-color: var(--accent); background: var(--accent-soft); }
+  ul.check { padding-left: 1.2rem; margin: .4rem 0; }
+  ul.check li { margin: .25rem 0; }
+
+  /* 折叠面板：长内容渐进披露 */
+  details { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); margin: .7rem 0; }
+  summary { cursor: pointer; padding: .9rem 1.2rem; font-weight: 600; min-height: 44px; list-style: none; display: flex; justify-content: space-between; gap: 1rem; }
+  summary::-webkit-details-marker { display: none; }
+  summary::after { content: "展开 ▾"; color: var(--primary); font-weight: 500; font-size: .85rem; white-space: nowrap; }
+  details[open] summary::after { content: "收起 ▴"; }
+  details[open] summary { border-bottom: 1px solid var(--border); }
+  .dbody { padding: .6rem 1.3rem 1.1rem; }
+  .dbody ol, .dbody ul { padding-left: 1.4rem; }
+  .dbody li { margin: .35rem 0; }
+  .fu { display: block; margin-top: .2rem; color: var(--accent); font-size: .9rem; }
+
+  /* 条形图（纯 CSS，含文字数值，不只靠颜色传达信息） */
+  .bars { list-style: none; padding: 0; margin: .5rem 0; }
+  .bars li { display: grid; grid-template-columns: minmax(8em, 11em) 1fr 3.2em; align-items: center; gap: .7rem; margin: .45rem 0; font-size: .92rem; }
+  .bar { height: .85rem; background: #eaeef2; border-radius: 999px; overflow: hidden; }
+  .bar i { display: block; height: 100%; background: var(--primary); border-radius: 999px; }
+  .bars .v { text-align: right; font-variant-numeric: tabular-nums; font-weight: 600; }
+
+  table { width: 100%; border-collapse: collapse; font-size: .9rem; background: var(--surface); }
+  th, td { border: 1px solid var(--border); padding: .55rem .7rem; text-align: left; vertical-align: top; }
+  th { background: #f3f5f7; }
+  .table-scroll { overflow-x: auto; border-radius: var(--radius); }
+
+  /* 首屏插图 */
+  .hero-grid { display: grid; grid-template-columns: 1.25fr 1fr; gap: 2rem; align-items: center; margin-bottom: 1.8rem; }
+  .hero-img { width: 100%; max-width: 440px; height: auto; justify-self: center; }
+  .pic { display: block; width: 100%; height: auto; border-radius: 10px; margin-bottom: .9rem; }
+  .card h4 { font-size: 1.05rem; margin: 0 0 .4rem; }
+
+  /* 访谈阶段步骤条：阶段 3 内含三个话题 */
+  .steps { list-style: none; padding: 0; margin: 1rem 0 1.4rem; display: grid; grid-template-columns: 1fr 1fr 2fr 1fr; gap: .6rem; }
+  .steps li { background: var(--surface); border: 1px solid var(--border); border-top: 4px solid var(--primary); border-radius: 10px; padding: .7rem .9rem; font-size: .92rem; }
+  .steps li.main { background: var(--primary-soft); }
+  .steps b { display: block; color: var(--primary); font-size: .8rem; }
+  .steps small { display: block; color: var(--muted); font-size: .8rem; margin-top: .2rem; }
+  .stage { border-left: 4px solid var(--primary); padding: .1rem 0 .1rem 1rem; margin: .9rem 0; }
+  .stage-title { font-weight: 700; margin: .4rem 0; }
+  .stage-title span { color: var(--primary); margin-right: .4rem; }
+
+  /* 题号与脚本编号一致（W1、Q1.1、Q4…） */
+  ol.qn { list-style: none; padding-left: 0; counter-reset: q; }
+  ol.qn > li { counter-increment: q; position: relative; padding-left: 3.4em; }
+  ol.qn > li::before { content: var(--p) counter(q); position: absolute; left: 0; font-weight: 700; color: var(--primary); }
+
+  .hero-grid > *, .grid > *, nav { min-width: 0; }
+  @media (max-width: 720px) {
+    .hero-grid { grid-template-columns: 1fr; }
+    .hero-img { max-width: 320px; }
+    .size-ctl > span { display: none; }
+    nav a { white-space: nowrap; }
+    .steps { grid-template-columns: 1fr; }
+  }
+
+  footer { padding: 2.5rem 0 3rem; border-top: 1px solid var(--border); color: var(--muted); font-size: .9rem; }
+  .totop { position: fixed; right: 1rem; bottom: 1rem; min-width: 48px; min-height: 48px; border-radius: 50%; border: 0; background: var(--primary); color: #fff; font-size: 1.2rem; cursor: pointer; box-shadow: 0 4px 12px rgba(0,0,0,.18); }
+
+  @media (max-width: 720px) {
+    h1 { font-size: 1.6rem; }
+    nav { order: 3; width: 100%; overflow-x: auto; }
+    nav ul { flex-wrap: nowrap; }
+    .bars li { grid-template-columns: 1fr 3em; }
+    .bars li .bar { grid-column: 1 / -1; grid-row: 2; }
+  }
+  @media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }
+  @media print { header.top, .totop, .size-ctl { display: none; } details { border: 0; } }
+</style>
+</head>
+<body>
+<a class="skip" href="#main">跳到正文</a>
+
+<header class="top">
+  <div class="wrap">
+    <a class="brand" href="#top">起个队名真的好难啊 <span>· HCI 项目</span></a>
+    <nav aria-label="页面导航">
+      <ul>
+        <li><a href="#team">团队介绍</a></li>
+        <li><a href="#proposal">项目提案</a></li>
+        <li><a href="#plan">数据收集计划</a></li>
+        <li><a href="#progress">进展与发现</a></li>
+      </ul>
+    </nav>
+    <div class="size-ctl" role="group" aria-label="调整文字大小">
+      <span aria-hidden="true">字号</span>
+      <button type="button" data-size="md" aria-pressed="true" aria-label="标准字号">A</button>
+      <button type="button" data-size="lg" aria-pressed="false" aria-label="大字号">A+</button>
+      <button type="button" data-size="xl" aria-pressed="false" aria-label="特大字号">A++</button>
+    </div>
+  </div>
+</header>
+
+<main id="main">
+  <section class="hero" id="top" aria-labelledby="hero-title">
+    <div class="wrap">
+      <div class="hero-grid">
+        <div>
+          <span class="eyebrow">人机交互课程项目 · P3 Collecting Data</span>
+          <h1 id="hero-title">老年人用药管理与子女远程联动 App</h1>
+          <p class="lead">我们想帮独居、空巢的慢性病老人按时、按量服药：提醒方式适合老人，记录和共享由老人自己决定，家人远程查看时也不会变成“监控”。</p>
+        </div>
+        <img class="hero-img" src="images/hero.svg" width="480" height="380"
+             alt="示意图：老人手机到点大字提醒“该吃药了”，点“我吃好了”确认后，子女手机收到“妈妈已服药”通知和本周服药统计">
+      </div>
+      <ul class="facts" aria-label="项目概况">
+        <li><b>4 位</b><small>已完成老年用户深度访谈</small></li>
+        <li><b>11 份</b><small>家庭照护者有效问卷</small></li>
+        <li><b>22 题</b><small>问卷覆盖需求、功能与隐私</small></li>
+        <li><b>4 人</b><small>团队成员</small></li>
+      </ul>
+    </div>
+  </section>
+
+  <section class="block" id="team" aria-labelledby="team-title">
+    <div class="wrap">
+      <h2 id="team-title"><span class="num">01</span>团队介绍</h2>
+      <p class="sub">队名：起个队名真的好难啊。我们是来自人机交互课程的四人小组。</p>
+      <div class="grid">
+        <article class="card">
+          <div class="avatar" aria-hidden="true">陈</div>
+          <h3>陈国伟</h3>
+          <p class="muted">访谈脚本撰写 · 全文审阅与改进</p>
+          <p><span class="tag">访谈员</span><span class="tag">统筹</span></p>
+        </article>
+        <article class="card">
+          <div class="avatar" aria-hidden="true">程</div>
+          <h3>程运波</h3>
+          <p class="muted">访谈脚本撰写</p>
+          <p><span class="tag">访谈员</span></p>
+        </article>
+        <article class="card">
+          <div class="avatar" aria-hidden="true">朱</div>
+          <h3>朱文冰</h3>
+          <p class="muted">调查问卷设计</p>
+          <p><span class="tag">访谈员</span><span class="tag">问卷</span></p>
+        </article>
+        <article class="card">
+          <div class="avatar" aria-hidden="true">杨</div>
+          <h3>杨伟炳</h3>
+          <p class="muted">调查问卷设计</p>
+          <p><span class="tag">访谈员</span><span class="tag">问卷</span></p>
+        </article>
+      </div>
+    </div>
+  </section>
+  <section class="block" id="proposal" aria-labelledby="proposal-title">
+    <div class="wrap">
+      <h2 id="proposal-title"><span class="num">02</span>项目提案</h2>
+      <p class="sub">老年人用药管理与子女远程联动 App</p>
+
+      <h3>背景与问题</h3>
+      <p>我国老龄化程度不断加深，独居、空巢老人越来越多。他们很多人有高血压、糖尿病等慢性病，每天要吃好几种药，但记性变差，经常漏服或错服。子女大多在外地工作，没法实时知道父母到底吃没吃药。现有的用药提醒 App 大多是为年轻人设计的，操作复杂，而且多是单机版，子女无法远程查看服药记录。</p>
+
+      <div class="grid">
+        <div class="card">
+          <img class="pic" src="images/pain-forget.svg" width="160" height="110" alt="">
+          <h4>痛点 1 · 老人记不住</h4>
+          <p>要吃的药种类多、时间不一样，只靠记忆很容易漏服，有时还会因为“不确定吃没吃”而重复服药。</p>
+        </div>
+        <div class="card">
+          <img class="pic" src="images/pain-ui.svg" width="160" height="110" alt="">
+          <h4>痛点 2 · 工具不适老</h4>
+          <p>现有 App 字太小、流程长、弹广告、要注册；闹钟和药盒提醒声音要么听不见，要么太刺耳。</p>
+        </div>
+        <div class="card">
+          <img class="pic" src="images/pain-worry.svg" width="160" height="110" alt="">
+          <h4>痛点 3 · 子女不放心</h4>
+          <p>子女只能靠打电话问“今天吃药了吗”，老人觉得被盘问，子女也不完全相信回答。</p>
+        </div>
+      </div>
+
+      <h3>目标用户</h3>
+      <ul class="check">
+        <li><b>主要用户：</b>需要长期服药的 60 岁以上老人，尤其是独居或空巢老人。</li>
+        <li><b>次要用户：</b>关心或协助老人用药的成年子女和其他家庭照护者。</li>
+      </ul>
+
+      <h3>核心功能设想</h3>
+      <div class="grid">
+        <div class="card"><h4>到点提醒</h4><p>全屏弹窗、大字显示，同时语音播报“该吃降压药了”。</p></div>
+        <div class="card"><h4>一键确认</h4><p>一个大按钮确认服药，不用注册，也不用多层跳转。</p></div>
+        <div class="card"><h4>远程查看</h4><p>子女在手机上查看服药记录，漏服时收到通知。</p></div>
+        <div class="card"><h4>老人掌控共享</h4><p>老人决定谁能看、看什么，并且可以随时暂停共享。</p></div>
+      </div>
+
+      <div class="callout">
+        <b>设计原则：</b>适老化（大字、高对比、大按钮、语音）、操作最简（一次只做一件事）、无广告、尊重老人的自主权和隐私。
+      </div>
+    </div>
+  </section>
+  <section class="block" id="plan" aria-labelledby="plan-title">
+    <div class="wrap">
+      <h2 id="plan-title"><span class="num">03</span>数据收集计划</h2>
+      <p class="sub">我们用两种方法收集数据：先通过半结构化访谈深入了解老人，再通过问卷大范围了解家庭照护者的需求。</p>
+
+      <div class="grid">
+        <div class="card">
+          <h4>方法一 · 半结构化访谈</h4>
+          <p><b>对象：</b>需要长期服药的老年人</p>
+          <p><b>人数：</b>4 位</p>
+          <p><b>时长：</b>约 30 分钟 / 人</p>
+          <p><b>记录：</b>征得同意后录音，整理成逐字稿</p>
+        </div>
+        <div class="card">
+          <h4>方法二 · 在线问卷</h4>
+          <p><b>对象：</b>关心或协助 60 岁以上亲属用药的成年子女和其他照护者</p>
+          <p><b>样本：</b>10 份以上（实际 11 份）</p>
+          <p><b>时长：</b>5–7 分钟，匿名填写</p>
+        </div>
+      </div>
+
+      <h3>访谈流程与脚本</h3>
+      <p class="muted">访谈分为四个阶段，其中阶段 3 是主体，包含三个话题。每个话题都会根据回答临时追问（what / why / how），橙色文字为追问示例。</p>
+      <ol class="steps" aria-label="访谈的四个阶段">
+        <li><b>阶段 1</b>介绍与知情同意</li>
+        <li><b>阶段 2</b>暖场（W1–W4）</li>
+        <li class="main"><b>阶段 3</b>主体访谈<small>话题 1 用药习惯 · 话题 2 现有工具 · 话题 3 子女远程</small></li>
+        <li><b>阶段 4</b>结尾</li>
+      </ol>
+
+      <details>
+        <summary>阶段 1 · 介绍与知情同意</summary>
+        <div class="dbody">
+          <p>说明研究目的（了解老人日常用药的实际情况，用来设计更适合老人的工具），告诉对方访谈约 30 分钟，可以随时跳过不想回答的问题或停止访谈；征得同意后录音，录音只用于内部分析，不会公开。</p>
+        </div>
+      </details>
+
+      <details>
+        <summary>阶段 2 · 暖场（W1–W4）</summary>
+        <div class="dbody"><ol class="qn" style="--p:'W'">
+          <li>您今年多大了？平时是自己住，还是和老伴一起住？</li>
+          <li>可以简单说说您一天是怎么过的吗？</li>
+          <li>您平时身体怎么样？需要长期按时吃药吗？</li>
+          <li>您平时用智能手机吗？一般用它做什么？</li>
+        </ol></div>
+      </details>
+
+      <div class="stage">
+      <p class="stage-title"><span>阶段 3</span>主体访谈 · 三个话题</p>
+      <details>
+        <summary>话题 1 · 日常用药的习惯与经历（Q1.1–Q1.6）</summary>
+        <div class="dbody"><ol class="qn" style="--p:'Q1.'">
+          <li>您现在每天大概要吃几种药？分别在一天里的什么时候吃？</li>
+          <li>跟我说说您昨天吃药的过程吧，从准备吃药开始，一直到把药吃完。</li>
+          <li>您还记得最近一次忘记吃药是哪次吗？当时什么情况？后来是怎么发现的？<span class="fu">追问：当时发现漏吃了，您心里是什么感觉？</span></li>
+          <li>有没有出现过本来已经吃过药，结果又吃了一遍的情况？</li>
+          <li>平时您是怎么记住“这个时间该吃哪种药”的？</li>
+          <li>有没有哪一次，您因为吃药这件事特别担心或着急？<span class="fu">追问：那次之后，您做了哪些改变？</span></li>
+        </ol></div>
+      </details>
+
+      <details>
+        <summary>话题 2 · 现有提醒工具与手机 App 的使用体验（Q2.1–Q2.6）</summary>
+        <div class="dbody"><ol class="qn" style="--p:'Q2.'">
+          <li>您有没有用过药盒、闹钟之类的办法提醒自己吃药？用下来感觉怎么样？</li>
+          <li>您之前有没有用过手机上的用药提醒 App？当时为什么想用？</li>
+          <li>跟我讲讲您第一次打开那个 App 时的情景吧。<span class="fu">追问：除了字小，还有哪里让您觉得特别费劲？</span></li>
+          <li>这个 App 您现在还在用吗？（如果不用了）当时是什么让您决定不用的？</li>
+          <li>在用过的提醒工具里，有没有哪一次让您觉得“这样提醒真不错”或者“真让人烦”？</li>
+          <li>您平时是怎么学会用一个新的手机功能的？<span class="fu">追问：如果有人手把手教，您愿意学吗？</span></li>
+        </ol></div>
+      </details>
+
+      <details>
+        <summary>话题 3 · 子女的关心与远程了解用药情况（Q3.1–Q3.6）</summary>
+        <div class="dbody"><ol class="qn" style="--p:'Q3.'">
+          <li>您的孩子现在在您身边，还是在外地工作？上次联系时聊了些什么？</li>
+          <li>最近一次您和孩子聊到吃药的事是什么时候？</li>
+          <li>孩子有没有因为担心您吃药，专门叮嘱过您什么？</li>
+          <li>有没有哪次是孩子发现您忘了吃药？当时发生了什么？</li>
+          <li>孩子打电话问您“今天吃药了吗”，您当时是什么感觉？<span class="fu">追问：能详细说说为什么会有这种感觉吗？</span></li>
+          <li>现在孩子一般通过什么方式了解您的身体状况？<span class="fu">追问：如果由您自己决定什么时候共享给孩子看呢？</span></li>
+        </ol></div>
+      </details>
+
+      </div>
+
+      <details>
+        <summary>阶段 4 · 结尾</summary>
+        <div class="dbody">
+          <p>总结访谈内容并感谢对方。最后问一个问题：“如果未来有一款专门为老年人设计的用药提醒工具，既能提醒吃药，也能让在外地的孩子看到您有没有按时吃药，您觉得它最应该先帮您解决什么问题？”</p>
+        </div>
+      </details>
+      <h3>问卷结构（共 22 题）</h3>
+      <p class="muted">问卷对象：关心或协助 60 岁以上亲属用药的成年子女和其他家庭照护者。Q1 选“从未”的人直接结束作答。</p>
+
+      <details>
+        <summary>一、基本情况（Q1–Q3）</summary>
+        <div class="dbody"><ol class="qn" style="--p:'Q'">
+          <li>过去 12 个月中，您是否关心或协助过至少一位 60 岁以上亲属的用药事务？<span class="tag">单选</span></li>
+          <li>您与该老人的关系是？<span class="tag">单选</span></li>
+          <li>您的年龄是？<span class="tag">单选</span></li>
+        </ol></div>
+      </details>
+
+      <details>
+        <summary>二、远程照护需求（Q4–Q11）</summary>
+        <div class="dbody"><ol class="qn" style="--p:'Q'; counter-reset: q 3">
+          <li>如有需要，您通常需要多长时间才能到达老人身边？<span class="tag">单选</span></li>
+          <li>您在家庭照护中承担的角色是？<span class="tag">单选</span></li>
+          <li>除您之外，还有多少位家人会共同关注老人的用药情况？<span class="tag">单选</span></li>
+          <li>您平均每周花多少时间沟通或协调老人的用药事务？<span class="tag">单选</span></li>
+          <li>当您不能及时确认老人是否按计划服药时，您的担心程度如何？<span class="tag">5 级量表</span></li>
+          <li>在远程照护中，您最担心哪些情况？<span class="tag">多选</span></li>
+          <li>超过计划服药时间多久仍未确认时，系统应通知您？<span class="tag">单选</span></li>
+          <li>老人逾期未确认服药时，您希望系统如何处理？<span class="tag">单选</span></li>
+        </ol></div>
+      </details>
+
+      <details>
+        <summary>三、功能设计（Q12–Q17）</summary>
+        <div class="dbody"><ol class="qn" style="--p:'Q'; counter-reset: q 11">
+          <li>请评价以下功能的重要程度：远程同步服药计划、查看服药确认记录、接收漏服或逾期提醒、查看周度服药统计、记录处方调整、多名家人共同照护、紧急情况联络。<span class="tag">矩阵量表 1–5</span></li>
+          <li>漏服提醒中，您希望看到哪些信息？<span class="tag">多选</span></li>
+          <li>您希望通过哪些渠道接收重要提醒？<span class="tag">最多选 2 项</span></li>
+          <li>您认为哪种服药确认方式最合适？<span class="tag">单选</span></li>
+          <li>多名家人共同照护时，您需要哪些协作功能？<span class="tag">多选</span></li>
+          <li>谁应该拥有修改服药计划的权限？<span class="tag">单选</span></li>
+        </ol></div>
+      </details>
+
+      <details>
+        <summary>四、隐私与控制（Q18–Q19）</summary>
+        <div class="dbody"><ol class="qn" style="--p:'Q'; counter-reset: q 17">
+          <li>在获得老人同意的情况下，您认为哪些信息可以向家人共享？<span class="tag">多选</span></li>
+          <li>“老人应当能够随时暂停信息共享，并决定哪些家人可以查看记录。”您是否同意？<span class="tag">5 级量表</span></li>
+        </ol></div>
+      </details>
+
+      <details>
+        <summary>五、使用意愿（Q20–Q22）</summary>
+        <div class="dbody"><ol class="qn" style="--p:'Q'; counter-reset: q 19">
+          <li>如果该 App 能提供可控的信息共享和异常提醒，您的使用意愿如何？<span class="tag">5 级量表</span></li>
+          <li>哪些因素可能阻碍您使用该 App？<span class="tag">多选</span></li>
+          <li>对于远程查看老人的用药记录，您最大的顾虑或认为必须满足的条件是什么？<span class="tag">开放题</span></li>
+        </ol></div>
+      </details>
+    </div>
+  </section>
+  <section class="block" id="progress" aria-labelledby="progress-title">
+    <div class="wrap">
+      <h2 id="progress-title"><span class="num">04</span>数据收集进展与初步发现</h2>
+      <p class="sub">访谈和问卷都已完成。下面是受访者概况和初步发现，完整的逐字稿和原始数据见提交的 PDF。</p>
+
+      <h3>访谈对象概况</h3>
+      <div class="table-scroll">
+        <table>
+          <caption class="muted" style="text-align:left;padding:.4rem 0">4 位受访老人（使用化名）</caption>
+          <thead><tr><th scope="col">受访者</th><th scope="col">情况</th><th scope="col">用药</th><th scope="col">关键发现</th><th scope="col">访谈员</th></tr></thead>
+          <tbody>
+            <tr><td>李阿姨，68 岁</td><td>独居，女儿在外地</td><td>2 种降压药</td><td>App 字太小、要注册，误触广告后不敢再用；希望到点直接用语音提醒</td><td>程运波</td></tr>
+            <tr><td>张大爷，72 岁</td><td>与老伴同住</td><td>3 种口服药 + 胰岛素</td><td>药盒提示音太刺耳；不愿被儿子“监控”，要求自己掌控共享</td><td>陈国伟</td></tr>
+            <tr><td>王阿姨，65 岁</td><td>独居，退休护士长</td><td>4 种药</td><td>嫌现有 App 跳转多、广告多；希望用语音记录；反对默认强制共享</td><td>朱文冰</td></tr>
+            <tr><td>赵大爷，75 岁</td><td>独居，重度听力障碍</td><td>3 种药</td><td>忘记吃没吃，多吃了一粒进了医院；听不到闹钟；愿意共享给女儿</td><td>杨伟炳</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h3>问卷初步发现（n = 11）</h3>
+      <div class="grid">
+        <div class="card">
+          <h4>功能重要性（平均分 / 5）</h4>
+          <ul class="bars">
+            <li><span>紧急情况联络</span><span class="bar"><i style="width:94.6%"></i></span><span class="v">4.73</span></li>
+            <li><span>漏服 / 逾期提醒</span><span class="bar"><i style="width:91%"></i></span><span class="v">4.55</span></li>
+            <li><span>查看服药确认记录</span><span class="bar"><i style="width:85.4%"></i></span><span class="v">4.27</span></li>
+            <li><span>多名家人共同照护</span><span class="bar"><i style="width:76.4%"></i></span><span class="v">3.82</span></li>
+            <li><span>远程同步服药计划</span><span class="bar"><i style="width:74.6%"></i></span><span class="v">3.73</span></li>
+            <li><span>记录处方调整</span><span class="bar"><i style="width:69%"></i></span><span class="v">3.45</span></li>
+            <li><span>查看周度服药统计</span><span class="bar"><i style="width:65.4%"></i></span><span class="v">3.27</span></li>
+          </ul>
+        </div>
+        <div class="card">
+          <h4>照护者最担心的情况（人数 / 11）</h4>
+          <ul class="bars">
+            <li><span>漏服</span><span class="bar"><i style="width:72.7%"></i></span><span class="v">8</span></li>
+            <li><span>服错药物或剂量</span><span class="bar"><i style="width:36.4%"></i></span><span class="v">4</span></li>
+            <li><span>出现不良反应</span><span class="bar"><i style="width:36.4%"></i></span><span class="v">4</span></li>
+            <li><span>长时间联系不上</span><span class="bar"><i style="width:36.4%"></i></span><span class="v">4</span></li>
+            <li><span>重复服药</span><span class="bar"><i style="width:27.3%"></i></span><span class="v">3</span></li>
+            <li><span>服药时间错误</span><span class="bar"><i style="width:27.3%"></i></span><span class="v">3</span></li>
+            <li><span>处方调整后仍按旧计划</span><span class="bar"><i style="width:18.2%"></i></span><span class="v">2</span></li>
+          </ul>
+        </div>
+      </div>
+
+      <h3>初步洞察</h3>
+      <div class="grid">
+        <div class="card"><span class="tag warn">适老化</span><p>4 位老人都遇到过现有工具不适老的问题：字太小、听不见提示音、提示音太刺耳或操作太复杂。提醒需要同时用大字、语音和震动，确认操作要一步完成。</p></div>
+        <div class="card"><span class="tag warn">自主与隐私</span><p>张大爷和王阿姨都明确表示要“自己决定给谁看”，反对默认共享；照护者对“老人可随时暂停共享”的认同度平均为 4.09 / 5。</p></div>
+        <div class="card"><span class="tag warn">只共享必要信息</span><p>10 / 11 的照护者认为可以共享“是否按时服药”和“异常提醒”；认为可以共享疾病信息、位置信息的各只有 1 人。</p></div>
+        <div class="card"><span class="tag warn">通知策略可配置</span><p>照护者无法确认服药时的担心程度平均为 3.91 / 5。对逾期如何处理，意见分散：“逐级通知”“同时通知多位家人”“先提醒老人再通知”各 3 票，所以通知策略应该允许家庭自己设置。</p></div>
+      </div>
+    </div>
+  </section>
+</main>
+<footer>
+  <div class="wrap">
+    <p><b>贡献声明</b>：访谈脚本初稿 —— 陈国伟、程运波；调查问卷初稿 —— 朱文冰、杨伟炳；审阅与改进 —— 陈国伟。</p>
+    <p>人机交互实验课 · 队伍：起个队名真的好难啊 · 访谈对象均使用化名，所有数据仅用于课程研究。</p>
+  </div>
+</footer>
+
+<button class="totop" type="button" aria-label="回到顶部" hidden>↑</button>
+
+<script>
+  // 字号切换：记住用户选择（系统状态可见 + 用户控制）
+  (function () {
+    var root = document.documentElement;
+    var btns = document.querySelectorAll('.size-ctl button');
+    function apply(size) {
+      if (size === 'md') root.removeAttribute('data-size'); else root.setAttribute('data-size', size);
+      btns.forEach(function (b) { b.setAttribute('aria-pressed', String(b.dataset.size === size)); });
+      try { localStorage.setItem('fontSize', size); } catch (e) {}
+    }
+    btns.forEach(function (b) { b.addEventListener('click', function () { apply(b.dataset.size); }); });
+    try { var saved = localStorage.getItem('fontSize'); if (saved) apply(saved); } catch (e) {}
+
+    // 导航高亮当前所在区块
+    var links = document.querySelectorAll('nav a');
+    var sections = Array.prototype.map.call(links, function (a) { return document.querySelector(a.getAttribute('href')); });
+    var totop = document.querySelector('.totop');
+    function onScroll() {
+      var y = window.scrollY + 120, current = null;
+      sections.forEach(function (s, i) { if (s && s.offsetTop <= y) current = i; });
+      links.forEach(function (a, i) { if (i === current) a.setAttribute('aria-current', 'true'); else a.removeAttribute('aria-current'); });
+      totop.hidden = window.scrollY < 600;
+    }
+    window.addEventListener('scroll', onScroll, { passive: true });
+    onScroll();
+    totop.addEventListener('click', function () { window.scrollTo(0, 0); document.querySelector('.brand').focus(); });
+  })();
+</script>
+</body>
+</html>

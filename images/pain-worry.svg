@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 160 110" font-family="-apple-system, 'PingFang SC', sans-serif">
+  <rect width="160" height="110" rx="14" fill="#e6f2ed"/>
+  <!-- 子女的询问 -->
+  <path d="M14 18 h84 a8 8 0 0 1 8 8 v22 a8 8 0 0 1 -8 8 h-60 l-12 10 v-10 h-12 a8 8 0 0 1 -8 -8 v-22 a8 8 0 0 1 8 -8z" fill="#0b6e4f"/>
+  <text x="56" y="43" font-size="14" font-weight="700" fill="#ffffff" text-anchor="middle">吃药了吗？</text>
+  <!-- 老人的回答 -->
+  <path d="M74 60 h66 a8 8 0 0 1 8 8 v18 a8 8 0 0 1 -8 8 h-8 v9 l-11 -9 h-47 a8 8 0 0 1 -8 -8 v-18 a8 8 0 0 1 8 -8z" fill="#ffffff" stroke="#b54708" stroke-width="2.5"/>
+  <text x="107" y="82" font-size="14" font-weight="700" fill="#b54708" text-anchor="middle">吃了…</text>
+</svg>

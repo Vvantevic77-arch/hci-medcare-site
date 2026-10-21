@@ -1,0 +1,52 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 480 380" font-family="-apple-system, 'PingFang SC', 'Microsoft YaHei', sans-serif">
+  <!-- 背景 -->
+  <circle cx="250" cy="195" r="170" fill="#e6f2ed"/>
+  <circle cx="410" cy="70" r="28" fill="#fdf0e6"/>
+  <circle cx="60" cy="330" r="18" fill="#fdf0e6"/>
+
+  <!-- 连接线：老人手机 → 子女手机 -->
+  <path d="M215 175 C 260 120, 290 130, 318 170" fill="none" stroke="#0b6e4f" stroke-width="3" stroke-dasharray="6 7" stroke-linecap="round"/>
+  <path d="M266 128 c-6-8-18-4-16 5 c2 7 16 15 16 15 s14-8 16-15 c2-9-10-13-16-5z" fill="#b54708"/>
+
+  <!-- 老人手机 -->
+  <rect x="40" y="40" width="175" height="300" rx="26" fill="#1f2328"/>
+  <rect x="52" y="58" width="151" height="264" rx="16" fill="#ffffff"/>
+  <text x="127.5" y="88" font-size="15" fill="#57606a" text-anchor="middle">08:00</text>
+  <!-- 药丸 -->
+  <g transform="translate(127.5 128) rotate(-35)">
+    <rect x="-26" y="-12" width="52" height="24" rx="12" fill="#0b6e4f"/>
+    <rect x="0" y="-12" width="26" height="24" rx="0" fill="#ffffff" stroke="#0b6e4f" stroke-width="3"/>
+    <rect x="-26" y="-12" width="52" height="24" rx="12" fill="none" stroke="#0b6e4f" stroke-width="3"/>
+  </g>
+  <text x="127.5" y="190" font-size="26" font-weight="700" fill="#1f2328" text-anchor="middle">该吃药了</text>
+  <text x="127.5" y="216" font-size="14" fill="#57606a" text-anchor="middle">降压药 · 1 片</text>
+  <rect x="68" y="240" width="119" height="54" rx="14" fill="#0b6e4f"/>
+  <text x="127.5" y="274" font-size="19" font-weight="700" fill="#ffffff" text-anchor="middle">我吃好了</text>
+
+  <!-- 语音播报声波 -->
+  <g fill="none" stroke="#b54708" stroke-width="3.5" stroke-linecap="round">
+    <path d="M226 60 q10 12 0 24"/>
+    <path d="M236 52 q18 20 0 40"/>
+  </g>
+
+  <!-- 子女手机 -->
+  <rect x="300" y="120" width="145" height="230" rx="22" fill="#1f2328"/>
+  <rect x="310" y="135" width="125" height="200" rx="13" fill="#f6f8fa"/>
+  <rect x="318" y="150" width="109" height="66" rx="10" fill="#ffffff" stroke="#d8dee4"/>
+  <circle cx="338" cy="172" r="11" fill="#0b6e4f"/>
+  <path d="M332 172 l4 5 l8 -9" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+  <text x="355" y="170" font-size="12" font-weight="700" fill="#1f2328">妈妈已服药</text>
+  <text x="355" y="186" font-size="10.5" fill="#57606a">08:02 按时</text>
+  <text x="326" y="206" font-size="10" fill="#0b6e4f">老人已授权共享</text>
+  <rect x="318" y="226" width="109" height="92" rx="10" fill="#ffffff" stroke="#d8dee4"/>
+  <text x="326" y="246" font-size="11" font-weight="700" fill="#1f2328">本周按时 6/7</text>
+  <g fill="#0b6e4f">
+    <rect x="328" y="278" width="10" height="30" rx="2"/>
+    <rect x="342" y="268" width="10" height="40" rx="2"/>
+    <rect x="356" y="274" width="10" height="34" rx="2"/>
+    <rect x="370" y="264" width="10" height="44" rx="2"/>
+    <rect x="384" y="270" width="10" height="38" rx="2"/>
+    <rect x="398" y="296" width="10" height="12" rx="2" fill="#b54708"/>
+    <rect x="412" y="272" width="10" height="36" rx="2"/>
+  </g>
+</svg>
